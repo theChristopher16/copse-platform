@@ -1,0 +1,431 @@
+import React, { useEffect, useRef, useCallback } from 'react';
+import { MapPin, Navigation } from 'lucide-react';
+import { Location } from '../../types/firestore';
+import CyclingScoutIcon from '../ui/CyclingScoutIcon';
+
+interface LocationMapProps {
+  locations: Location[];
+  onLocationSelect: (location: Location) => void;
+  selectedLocation: Location | null;
+  height?: string;
+  showControls?: boolean;
+}
+
+const LocationMap: React.FC<LocationMapProps> = ({
+  locations,
+  onLocationSelect,
+  selectedLocation,
+  height = '600px',
+  showControls = true
+}) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
+  const leafletRef = useRef<any>(null); // Store Leaflet instance
+
+  const createPopupContent = useCallback((location: Location) => {
+    return `
+      <div class="location-popup">
+        <h3 class="font-semibold text-lg mb-2">${location.name}</h3>
+        <p class="text-gray-600 mb-2">${location.address}</p>
+        <div class="flex items-center space-x-2 text-sm text-gray-500">
+          <span class="inline-flex items-center px-2 py-1 bg-gray-100 rounded-full">
+            ${getCategoryIcon(location.category)}
+            ${location.category}
+          </span>
+          ${location.isImportant ? '<span class="text-yellow-500">⭐ Important</span>' : ''}
+        </div>
+      </div>
+    `;
+  }, []);
+
+  const getCategoryIcon = (category?: string) => {
+    switch (category?.toLowerCase()) {
+      case 'park': return '🌳';
+      case 'school': return '🏫';
+      case 'church': return '⛪';
+      case 'campground': return '🏕️';
+      case 'community center': return '🏢';
+      default: return '📍';
+    }
+  };
+
+  useEffect(() => {
+    // Dynamically import Leaflet to avoid SSR issues
+    const initMap = async () => {
+      try {
+        const L = await import('leaflet');
+        leafletRef.current = L; // Store Leaflet instance
+        
+        // Import Leaflet CSS
+        if (!document.querySelector('link[href*="leaflet.css"]')) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+          link.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+          link.crossOrigin = '';
+          document.head.appendChild(link);
+        }
+
+        // Fix Leaflet icon paths
+        L.Icon.Default.imagePath = 'https://unpkg.com/leaflet@1.9.4/dist/images/';
+
+        if (!mapRef.current || mapInstanceRef.current) return;
+
+        // Ensure the map container is visible and has dimensions
+        if (mapRef.current.offsetWidth === 0 || mapRef.current.offsetHeight === 0) {
+          console.warn('Map container has no dimensions, retrying in 100ms');
+          setTimeout(initMap, 100);
+          return;
+        }
+
+        // Initialize map with better error handling
+        const map = L.map(mapRef.current, {
+          zoomControl: true,
+          attributionControl: true,
+          preferCanvas: false,
+          zoomSnap: 0.1,
+          zoomDelta: 0.5,
+          // Add these options to prevent positioning issues
+          renderer: L.canvas(),
+          worldCopyJump: false
+        }).setView([40.7103, -89.6144], 11);
+        
+        mapInstanceRef.current = map;
+
+        // Add OpenStreetMap tiles with fallback
+        const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 18,
+          subdomains: ['a', 'b', 'c']
+        }).addTo(map);
+
+        // Add error handling for tile loading
+        tileLayer.on('tileerror', (e) => {
+          console.warn('Tile loading error:', e);
+        });
+
+        // Wait for map to be ready and tiles to load before adding markers
+        map.whenReady(() => {
+          // Wait for map panes to be fully initialized
+          setTimeout(() => {
+            // Ensure map panes exist before creating markers
+            if (!map.getPane('markerPane')) {
+              console.warn('Map panes not ready, retrying marker creation');
+              setTimeout(() => {
+                addMarkersToMap(map, L);
+              }, 500);
+              return;
+            }
+            
+            addMarkersToMap(map, L);
+          }, 1000); // Increased delay to ensure map is fully ready
+        });
+        
+        // Function to add markers with proper error handling
+        const addMarkersToMap = (map: any, L: any) => {
+          try {
+            // Add markers for each location
+            const markers: any[] = [];
+            locations.forEach((location) => {
+              if (location.geo?.lat && location.geo?.lng && 
+                  typeof location.geo.lat === 'number' && 
+                  typeof location.geo.lng === 'number' &&
+                  location.geo.lat >= -90 && location.geo.lat <= 90 &&
+                  location.geo.lng >= -180 && location.geo.lng <= 180) {
+                try {
+                  // Ensure map panes exist before creating marker
+                  if (!map.getPane('markerPane')) {
+                    console.warn(`Map panes not ready for ${location.name}, skipping marker`);
+                    return;
+                  }
+                  
+                  const marker = L.marker([location.geo.lat, location.geo.lng], {
+                    title: location.name,
+                    alt: location.name
+                  })
+                    .addTo(map)
+                    .bindPopup(createPopupContent(location))
+                    .on('click', () => onLocationSelect(location));
+
+                  markers.push(marker);
+                } catch (error) {
+                  console.warn(`Failed to create marker for location ${location.name}:`, error);
+                }
+              } else {
+                console.warn(`Location ${location.name} has no valid coordinates - skipping marker creation`);
+              }
+            });
+            markersRef.current = markers;
+
+            // Fit map to show all markers with better error handling
+            if (markers.length > 0) {
+              setTimeout(() => {
+                try {
+                  // Ensure all markers are properly initialized
+                  const validMarkers = markers.filter(marker => {
+                    try {
+                      const pos = marker.getLatLng();
+                      return pos && typeof pos.lat === 'number' && typeof pos.lng === 'number';
+                    } catch (e) {
+                      return false;
+                    }
+                  });
+                  
+                  if (validMarkers.length > 0) {
+                    const group = new (L as any).featureGroup(validMarkers);
+                    const bounds = group.getBounds();
+                    if (bounds && bounds.isValid()) {
+                      // Use invalidateSize to ensure map is properly sized
+                      map.invalidateSize();
+                      map.fitBounds(bounds.pad(0.1));
+                    } else {
+                      // Fallback: center on first valid marker
+                      const firstMarker = validMarkers[0];
+                      const pos = firstMarker.getLatLng();
+                      map.invalidateSize();
+                      map.setView([pos.lat, pos.lng], 12);
+                    }
+                  }
+                } catch (error) {
+                  console.warn('Failed to fit map bounds:', error);
+                  // Fallback: center on default location
+                  map.invalidateSize();
+                  map.setView([40.7103, -89.6144], 11);
+                }
+              }, 1500); // Increased delay to ensure everything is ready
+            }
+          } catch (error) {
+            console.error('Error adding markers:', error);
+          }
+        };
+
+        // Handle map resize events
+        const handleResize = () => {
+          if (mapInstanceRef.current) {
+            setTimeout(() => {
+              mapInstanceRef.current.invalidateSize();
+            }, 100);
+          }
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        // Cleanup resize listener
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+
+      } catch (error) {
+        console.error('Failed to load map:', error);
+        // Fallback to static map display
+        showStaticMap();
+      }
+    };
+
+    initMap();
+
+    return () => {
+      if (mapInstanceRef.current) {
+        try {
+          mapInstanceRef.current.remove();
+        } catch (error) {
+          console.warn('Error removing map:', error);
+        }
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [locations, onLocationSelect, createPopupContent]);
+
+  // Update selected location marker
+  useEffect(() => {
+    if (mapInstanceRef.current && selectedLocation && leafletRef.current) {
+      const L = leafletRef.current;
+      
+      // Remove previous selection styling
+      markersRef.current.forEach(marker => {
+        marker.setIcon(L.Icon.Default.prototype);
+      });
+
+      // Highlight selected location
+      const selectedMarker = markersRef.current.find(marker => {
+        const pos = marker.getLatLng();
+        return pos.lat === selectedLocation.geo?.lat && pos.lng === selectedLocation.geo?.lng;
+      });
+
+      if (selectedMarker) {
+        const customIcon = L.divIcon({
+          className: 'custom-marker selected',
+          html: '<div class="marker-pin selected"></div>',
+          iconSize: [30, 30],
+          iconAnchor: [15, 30]
+        });
+        selectedMarker.setIcon(customIcon);
+        
+        // Center map on selected location
+        mapInstanceRef.current.setView([selectedLocation.geo!.lat, selectedLocation.geo!.lng], 14);
+      }
+    }
+  }, [selectedLocation]);
+
+  const showStaticMap = () => {
+    if (mapRef.current) {
+      mapRef.current.innerHTML = `
+        <div class="bg-gray-100 rounded-lg p-8 text-center">
+          <MapPin class="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h3 class="text-lg font-semibold text-gray-600 mb-2">Map Loading...</h3>
+          <p class="text-gray-500">Interactive map will be available shortly</p>
+        </div>
+      `;
+    }
+  };
+
+  const handleDirections = (location: Location) => {
+    if (location.geo?.lat && location.geo?.lng) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${location.geo.lat},${location.geo.lng}`;
+      window.open(url, '_blank');
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Map Container */}
+      <div 
+        ref={mapRef} 
+        className="w-full rounded-2xl overflow-hidden shadow-soft border border-white/50"
+        style={{ height }}
+      />
+
+      {/* Map Controls */}
+      {showControls && (
+        <div className="flex flex-wrap gap-4 justify-center">
+          <button
+            onClick={async () => {
+              if (mapInstanceRef.current && markersRef.current.length > 0) {
+                try {
+                  const L = await import('leaflet');
+                  const validMarkers = markersRef.current.filter(marker => {
+                    try {
+                      const pos = marker.getLatLng();
+                      return pos && typeof pos.lat === 'number' && typeof pos.lng === 'number';
+                    } catch (e) {
+                      return false;
+                    }
+                  });
+                  
+                  if (validMarkers.length > 0) {
+                    const group = new (L as any).featureGroup(validMarkers);
+                    const bounds = group.getBounds();
+                    if (bounds && bounds.isValid()) {
+                      // Use invalidateSize to ensure map is properly sized
+                      mapInstanceRef.current.invalidateSize();
+                      mapInstanceRef.current.fitBounds(bounds.pad(0.1));
+                    } else {
+                      // Fallback: center on first valid marker
+                      const firstMarker = validMarkers[0];
+                      const pos = firstMarker.getLatLng();
+                      mapInstanceRef.current.invalidateSize();
+                      mapInstanceRef.current.setView([pos.lat, pos.lng], 12);
+                    }
+                  }
+                } catch (error) {
+                  console.warn('Failed to fit bounds in button click:', error);
+                }
+              }
+            }}
+            className="flex items-center space-x-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-200"
+          >
+            <MapPin className="w-4 h-4" />
+            <span>Show All Locations</span>
+          </button>
+          
+          <button
+            onClick={() => {
+              if (mapInstanceRef.current) {
+                mapInstanceRef.current.invalidateSize();
+                mapInstanceRef.current.setView([40.7103, -89.6144], 11);
+              }
+            }}
+            className="flex items-center space-x-2 px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-colors duration-200"
+          >
+            <Navigation className="w-4 h-4" />
+            <span>Reset View</span>
+          </button>
+        </div>
+      )}
+
+      {/* Selected Location Details */}
+      {selectedLocation && (
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-soft animate-slide-up">
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h3 className="text-xl font-display font-semibold text-gray-900 mb-2">
+                {selectedLocation.name}
+              </h3>
+              <p className="text-gray-600 mb-3">{selectedLocation.address}</p>
+              {selectedLocation.notesPublic && (
+                <p className="text-gray-700 mb-3">{selectedLocation.notesPublic}</p>
+              )}
+            </div>
+            <button
+              onClick={() => onLocationSelect(selectedLocation)}
+              className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => handleDirections(selectedLocation)}
+              className="flex items-center space-x-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-200"
+            >
+              <Navigation className="w-4 h-4" />
+              <span>Directions</span>
+            </button>
+            
+            {selectedLocation.isImportant && (
+              <div className="flex items-center space-x-2 px-3 py-2 bg-yellow-100 text-yellow-700 rounded-lg">
+                <CyclingScoutIcon size={16} interval={2000} />
+                <span className="text-sm font-medium">Important Location</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Map Legend */}
+      <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 border border-white/50 shadow-soft">
+        <h4 className="text-sm font-semibold text-gray-900 mb-3">Location Types</h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+          <div className="flex items-center space-x-2">
+            <span>🌳</span>
+            <span className="text-gray-600">Park</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span>⛪</span>
+            <span className="text-gray-600">Church</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span>🏕️</span>
+            <span className="text-gray-600">Campground</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span>🏫</span>
+            <span className="text-gray-600">School</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span>🏢</span>
+            <span className="text-gray-600">Community Center</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span>📍</span>
+            <span className="text-gray-600">Other</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LocationMap;

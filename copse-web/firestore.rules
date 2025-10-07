@@ -1,0 +1,224 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ============================================================================
+    // TEMPORARY: Allow all reads/writes for testing (REMOVE IN PRODUCTION)
+    // ============================================================================
+    match /{document=**} {
+      allow read, write: if true;
+    }
+    
+    // ============================================================================
+    // HELPER FUNCTIONS (COMMENTED OUT FOR TESTING)
+    // ============================================================================
+    
+    // function isAuthenticated() {
+    //   return request.auth != null;
+    // }
+    
+    // Platform-level super admins (can access everything)
+    function isPlatformSuper() {
+      return request.auth != null && 
+             request.auth.token.platform_role in ['super_admin', 'platform_admin'];
+    }
+    
+    // Check if user is member of specific tenant
+    function isTenantMember(tenantId) {
+      return request.auth != null && 
+             exists(/databases/$(database)/documents/tenants/$(tenantId)/memberships/$(request.auth.uid));
+    }
+    
+    // Check if user has specific role in tenant
+    function hasTenantRole(tenantId, role) {
+      return request.auth != null &&
+             get(/databases/$(database)/documents/tenants/$(tenantId)/memberships/$(request.auth.uid))
+               .data.roles.hasAny([role]);
+    }
+    
+    // Check if user has specific permission in tenant
+    function hasTenantPermission(tenantId, permission) {
+      return request.auth != null &&
+             get(/databases/$(database)/documents/tenants/$(tenantId)/memberships/$(request.auth.uid))
+               .data.permissions.hasAny([permission]);
+    }
+    
+    // Check if user is admin in tenant
+    function isTenantAdmin(tenantId) {
+      return hasTenantRole(tenantId, 'admin') || 
+             hasTenantRole(tenantId, 'TENANT_ADMIN') ||
+             hasTenantRole(tenantId, 'super-admin');
+    }
+    
+    // ============================================================================
+    // PLATFORM-LEVEL DATA (Super Admin Only)
+    // ============================================================================
+    
+    // Platform users (super admins, platform admins)
+    match /platform_users/{userId} {
+      allow read, write: if isPlatformSuper();
+    }
+    
+    // Platform settings and configuration
+    match /platform_settings/{settingId} {
+      allow read, write: if isPlatformSuper();
+    }
+    
+    // Billing and subscription data
+    match /billing/{tenantId} {
+      allow read, write: if isPlatformSuper();
+    }
+    
+    // ============================================================================
+    // TENANT-SCOPED DATA MODEL
+    // ============================================================================
+    
+    match /tenants/{tenantId} {
+      // Tenant configuration
+      allow read: if isPlatformSuper() || isTenantMember(tenantId);
+      allow write: if isPlatformSuper() || isTenantAdmin(tenantId);
+      
+      // Tenant memberships (who belongs to this tenant)
+      match /memberships/{userId} {
+        allow read: if isPlatformSuper() || isTenantMember(tenantId);
+        allow write: if isPlatformSuper() || isTenantAdmin(tenantId);
+      }
+      
+      // Events (tenant-scoped)
+      match /events/{eventId} {
+        allow read: if isPlatformSuper() || isTenantMember(tenantId);
+        allow create, update, delete: if isPlatformSuper() || 
+          hasTenantPermission(tenantId, 'manage_events') ||
+          hasTenantRole(tenantId, 'event_manager') ||
+          isTenantAdmin(tenantId);
+      }
+      
+      // RSVPs (tenant-scoped)
+      match /rsvps/{rsvpId} {
+        allow read: if isPlatformSuper() || isTenantMember(tenantId);
+        allow create: if isPlatformSuper() || isTenantMember(tenantId);
+        allow update, delete: if isPlatformSuper() || 
+          request.auth.uid == resource.data.userId ||
+          hasTenantPermission(tenantId, 'manage_rsvps') ||
+          isTenantAdmin(tenantId);
+      }
+      
+      // Announcements (tenant-scoped)
+      match /announcements/{announcementId} {
+        allow read: if isPlatformSuper() || isTenantMember(tenantId);
+        allow create, update, delete: if isPlatformSuper() || 
+          hasTenantPermission(tenantId, 'manage_announcements') ||
+          hasTenantRole(tenantId, 'announcement_manager') ||
+          isTenantAdmin(tenantId);
+      }
+      
+      // Locations (tenant-scoped)
+      match /locations/{locationId} {
+        allow read: if isPlatformSuper() || isTenantMember(tenantId);
+        allow create, update, delete: if isPlatformSuper() || 
+          hasTenantPermission(tenantId, 'manage_locations') ||
+          isTenantAdmin(tenantId);
+      }
+      
+      // Volunteer signups (tenant-scoped)
+      match /volunteer_signups/{signupId} {
+        allow read: if isPlatformSuper() || isTenantMember(tenantId);
+        allow create: if isPlatformSuper() || isTenantMember(tenantId);
+        allow update, delete: if isPlatformSuper() || 
+          request.auth.uid == resource.data.userId ||
+          hasTenantPermission(tenantId, 'manage_volunteers') ||
+          isTenantAdmin(tenantId);
+      }
+      
+      // Feedback (tenant-scoped)
+      match /feedback/{feedbackId} {
+        allow read: if isPlatformSuper() || isTenantMember(tenantId);
+        allow create: if isPlatformSuper() || isTenantMember(tenantId);
+        allow update, delete: if isPlatformSuper() || 
+          request.auth.uid == resource.data.userId ||
+          hasTenantPermission(tenantId, 'manage_feedback') ||
+          isTenantAdmin(tenantId);
+      }
+      
+      // Chat messages (tenant-scoped)
+      match /chat_channels/{channelId} {
+        allow read: if isPlatformSuper() || isTenantMember(tenantId);
+        allow create, update, delete: if isPlatformSuper() || 
+          hasTenantPermission(tenantId, 'manage_chat') ||
+          isTenantAdmin(tenantId);
+        
+        match /messages/{messageId} {
+          allow read: if isPlatformSuper() || isTenantMember(tenantId);
+          allow create: if isPlatformSuper() || isTenantMember(tenantId);
+          allow update, delete: if isPlatformSuper() || 
+            request.auth.uid == resource.data.userId ||
+            hasTenantPermission(tenantId, 'manage_chat') ||
+            isTenantAdmin(tenantId);
+        }
+      }
+      
+      // Analytics (tenant-scoped)
+      match /analytics/{metricId} {
+        allow read: if isPlatformSuper() || isTenantMember(tenantId);
+        allow write: if isPlatformSuper() || isTenantAdmin(tenantId);
+      }
+      
+      // Financial data (tenant-scoped)
+      match /finances/{transactionId} {
+        allow read: if isPlatformSuper() || 
+          hasTenantPermission(tenantId, 'view_finances') ||
+          isTenantAdmin(tenantId);
+        allow write: if isPlatformSuper() || 
+          hasTenantPermission(tenantId, 'manage_finances') ||
+          isTenantAdmin(tenantId);
+      }
+      
+      // Integrations (tenant-scoped)
+      match /integrations/{integrationId} {
+        allow read: if isPlatformSuper() || isTenantAdmin(tenantId);
+        allow write: if isPlatformSuper() || isTenantAdmin(tenantId);
+      }
+      
+      // Audit logs (tenant-scoped)
+      match /audit_logs/{logId} {
+        allow read: if isPlatformSuper() || isTenantAdmin(tenantId);
+        allow write: if false; // Only server-side writes
+      }
+    }
+    
+    // ============================================================================
+    // GLOBAL COLLECTIONS (Cross-tenant)
+    // ============================================================================
+    
+    // Tenant slug mapping (public for bootstrapping)
+    match /tenant_slugs/{slug} {
+      allow read: if true;
+      allow write: if isPlatformSuper();
+    }
+    
+    // Global user profiles (minimal, tenant-specific data in tenant collections)
+    match /users/{userId} {
+      allow read: if isPlatformSuper() || request.auth.uid == userId;
+      allow write: if isPlatformSuper() || request.auth.uid == userId;
+    }
+    
+    // Account requests (platform-level)
+    match /account_requests/{requestId} {
+      allow read, write: if isPlatformSuper();
+    }
+    
+    // ============================================================================
+    // SECURE COLLECTIONS (Server-only)
+    // ============================================================================
+    
+    // Secure tokens and API keys
+    match /secure_tokens/{tokenId} {
+      allow read, write: if false; // Server-only
+    }
+    
+    // Payment processing data
+    match /payments/{paymentId} {
+      allow read, write: if false; // Server-only
+    }
+  }
+}

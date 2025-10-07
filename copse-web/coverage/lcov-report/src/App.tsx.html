@@ -1,0 +1,556 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for src/App.tsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">src</a> App.tsx</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/15</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/4</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/6</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/15</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import configService from './services/configService';
+import ErrorBoundary from './components/ErrorBoundary';
+import { ToastProvider } from './contexts/ToastContext';
+import ScrollToTop from './components/ScrollToTop';
+&nbsp;
+// Components
+import Layout from './components/Layout/Layout';
+import { AdminOnly, RootOnly, AuthenticatedOnly } from './components/Auth/RoleGuard';
+&nbsp;
+// Pages
+import HomePage from './pages/HomePage';
+import EventsPage from './pages/EventsPage';
+import LocationsPage from './pages/LocationsPage';
+import AnnouncementsPage from './pages/AnnouncementsPage';
+import ResourcesPage from './pages/ResourcesPage';
+import VolunteerPage from './pages/VolunteerPage';
+import FeedbackPage from './pages/FeedbackPage';
+import DataAuditPage from './pages/DataAuditPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import AnalyticsDashboard from './components/Analytics/AnalyticsDashboard';
+import AnalyticsTest from './components/Analytics/AnalyticsTest';
+import FormsDemoPage from './pages/FormsDemoPage';
+import CloudFunctionsTestPage from './pages/CloudFunctionsTestPage';
+import NotFoundPage from './pages/NotFoundPage';
+import EventDetailPage from './pages/EventDetailPage';
+&nbsp;
+// Admin Pages
+import AdminDashboard from './pages/AdminDashboard';
+import AdminEvents from './pages/AdminEvents';
+import AdminLocations from './pages/AdminLocations';
+import AdminAnnouncements from './pages/AdminAnnouncements';
+import AdminChat from './pages/AdminChat';
+import AdminAI from './pages/AdminAI';
+import AdminPermissionsAudit from './pages/AdminPermissionsAudit';
+import AdminLists from './pages/AdminLists';
+import AdminVolunteer from './pages/AdminVolunteer';
+import AdminSeasons from './pages/AdminSeasons';
+import AdminFundraising from './pages/AdminFundraising';
+import AdminFinances from './pages/AdminFinances';
+import AdminCostManagement from './pages/AdminCostManagement';
+import MultiTenantManagement from './pages/MultiTenantManagement';
+import UserManagement from './components/Admin/UserManagement';
+import ChatPage from './pages/ChatPage';
+import JoinPage from './pages/JoinPage';
+import RootAccountSetup from './pages/RootAccountSetup';
+import HackerTab from './pages/HackerTab';
+import AdminSettings from './pages/AdminSettings';
+import AdminReminders from './pages/AdminReminders';
+import DatabaseMonitor from './components/Admin/DatabaseMonitor';
+import SystemMonitor from './components/Admin/SystemMonitor';
+import PerformanceMonitor from './components/Performance/PerformanceMonitor';
+import { AdminProvider } from './contexts/AdminContext';
+import { MultiTenantProvider } from './contexts/MultiTenantContext';
+&nbsp;
+function <span class="fstat-no" title="function not covered" >App(</span>) {
+<span class="cstat-no" title="statement not covered" >  useEffect(<span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+    // Register service worker for PWA
+<span class="cstat-no" title="statement not covered" >    if ('serviceWorker' in navigator) {</span>
+<span class="cstat-no" title="statement not covered" >      window.addEventListener('load', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        navigator.serviceWorker.register('/sw.js')</span>
+          .then(<span class="fstat-no" title="function not covered" >(r</span>egistration) =&gt; {
+<span class="cstat-no" title="statement not covered" >            console.log('SW registered: ', registration);</span>
+          })
+          .catch(<span class="fstat-no" title="function not covered" >(r</span>egistrationError) =&gt; {
+<span class="cstat-no" title="statement not covered" >            console.log('SW registration failed: ', registrationError);</span>
+          });
+      });
+    }
+&nbsp;
+    // Initialize default configurations (non-blocking)
+    const initializeConfigs = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      try {</span>
+<span class="cstat-no" title="statement not covered" >        await configService.initializeDefaultConfigs('system');</span>
+<span class="cstat-no" title="statement not covered" >        console.log('Default configurations initialized');</span>
+      } catch (error: any) {
+        // Silently handle permission errors - this is expected when not authenticated
+<span class="cstat-no" title="statement not covered" >        if (error?.code === 'permission-denied') {</span>
+<span class="cstat-no" title="statement not covered" >          console.log('Config initialization skipped - no authenticated user');</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          console.warn('Failed to initialize default configurations:', error);</span>
+        }
+      }
+    };
+&nbsp;
+    // Run initialization in background without blocking app startup
+<span class="cstat-no" title="statement not covered" >    initializeConfigs();</span>
+  }, []);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return (</span>
+    &lt;ErrorBoundary&gt;
+      &lt;ToastProvider&gt;
+        &lt;AdminProvider&gt;
+          &lt;MultiTenantProvider&gt;
+            &lt;Router&gt;
+              &lt;ScrollToTop /&gt;
+            &lt;Routes&gt;
+          {/* Public Routes */}
+          &lt;Route path="/" element={&lt;Layout&gt;&lt;HomePage /&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/events" element={&lt;Layout&gt;&lt;EventsPage /&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/events/:eventId" element={&lt;Layout&gt;&lt;EventDetailPage /&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/locations" element={&lt;Layout&gt;&lt;LocationsPage /&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/announcements" element={&lt;Layout&gt;&lt;AnnouncementsPage /&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/resources" element={&lt;Layout&gt;&lt;ResourcesPage /&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/volunteer" element={&lt;Layout&gt;&lt;VolunteerPage /&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/privacy" element={&lt;Layout&gt;&lt;PrivacyPolicyPage /&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/join/:inviteId" element={&lt;JoinPage /&gt;} /&gt;
+          
+          {/* Authenticated Routes */}
+          &lt;Route path="/chat" element={&lt;Layout&gt;&lt;AuthenticatedOnly&gt;&lt;ChatPage /&gt;&lt;/AuthenticatedOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/feedback" element={&lt;Layout&gt;&lt;AuthenticatedOnly&gt;&lt;FeedbackPage /&gt;&lt;/AuthenticatedOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/data-audit" element={&lt;Layout&gt;&lt;AuthenticatedOnly&gt;&lt;DataAuditPage /&gt;&lt;/AuthenticatedOnly&gt;&lt;/Layout&gt;} /&gt;
+          
+          {/* Admin Routes */}
+          &lt;Route path="/analytics" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AnalyticsDashboard /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/analytics/test" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AnalyticsTest /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminDashboard /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/events" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminEvents /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/locations" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminLocations /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/announcements" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminAnnouncements /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/chat" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminChat /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/lists" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminLists /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/volunteer" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminVolunteer /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/seasons" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminSeasons /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/fundraising" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminFundraising /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/finances" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminFinances /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/users" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;UserManagement /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/permissions-audit" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminPermissionsAudit /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/reminders" element={&lt;Layout&gt;&lt;AdminOnly&gt;&lt;AdminReminders /&gt;&lt;/AdminOnly&gt;&lt;/Layout&gt;} /&gt;
+          
+          {/* Root-only Routes */}
+          &lt;Route path="/admin/ai" element={&lt;Layout&gt;&lt;RootOnly&gt;&lt;AdminAI /&gt;&lt;/RootOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/cost-management" element={&lt;Layout&gt;&lt;RootOnly&gt;&lt;AdminCostManagement /&gt;&lt;/RootOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/multi-tenant" element={&lt;Layout&gt;&lt;RootOnly&gt;&lt;MultiTenantManagement /&gt;&lt;/RootOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/settings" element={&lt;Layout&gt;&lt;RootOnly&gt;&lt;AdminSettings /&gt;&lt;/RootOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/soc" element={&lt;Layout&gt;&lt;RootOnly&gt;&lt;HackerTab /&gt;&lt;/RootOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/database" element={&lt;Layout&gt;&lt;RootOnly&gt;&lt;DatabaseMonitor /&gt;&lt;/RootOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/system" element={&lt;Layout&gt;&lt;RootOnly&gt;&lt;SystemMonitor /&gt;&lt;/RootOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/performance" element={&lt;Layout&gt;&lt;RootOnly&gt;&lt;PerformanceMonitor /&gt;&lt;/RootOnly&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/admin/root-setup" element={&lt;RootAccountSetup /&gt;} /&gt;
+          
+          {/* Development/Test Routes */}
+          &lt;Route path="/forms-demo" element={&lt;Layout&gt;&lt;FormsDemoPage /&gt;&lt;/Layout&gt;} /&gt;
+          &lt;Route path="/cloud-functions-test" element={&lt;Layout&gt;&lt;CloudFunctionsTestPage /&gt;&lt;/Layout&gt;} /&gt;
+          
+          &lt;Route path="*" element={&lt;Layout&gt;&lt;NotFoundPage /&gt;&lt;/Layout&gt;} /&gt;
+          &lt;/Routes&gt;
+                &lt;/Router&gt;
+              &lt;/MultiTenantProvider&gt;
+            &lt;/AdminProvider&gt;
+      &lt;/ToastProvider&gt;
+    &lt;/ErrorBoundary&gt;
+  );
+}
+&nbsp;
+export default App;
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2025-09-13T05:46:16.396Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
+</html>
+    
