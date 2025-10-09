@@ -1,7 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Clock, TrendingUp, Target, Calendar, BarChart3 } from 'lucide-react';
-import { getFirestore, collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, query, orderBy, limit, getDocs, where, Timestamp } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+
+// Helper function to calculate user retention rates
+const calculateUserRetention = async (db: any, startDate: Date, endDate: Date) => {
+  try {
+    // Get all users who signed up in the time range
+    const usersQuery = query(
+      collection(db, 'users'),
+      where('createdAt', '>=', Timestamp.fromDate(startDate)),
+      where('createdAt', '<=', Timestamp.fromDate(endDate))
+    );
+    const usersSnapshot = await getDocs(usersQuery);
+    
+    const cohortUsers = usersSnapshot.docs.map(doc => ({
+      id: doc.id,
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+      lastLoginAt: doc.data().lastLoginAt?.toDate()
+    }));
+
+    if (cohortUsers.length === 0) {
+      return { day1: 0, day7: 0, day30: 0 };
+    }
+
+    // Calculate retention for each cohort day
+    const retentionData = { day1: 0, day7: 0, day30: 0 };
+    const totalCohortUsers = cohortUsers.length;
+
+    // Day 1 retention: users who returned within 1 day of signup
+    const day1Retained = cohortUsers.filter(user => {
+      if (!user.lastLoginAt) return false;
+      const daysDiff = Math.floor((user.lastLoginAt.getTime() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24));
+      return daysDiff <= 1;
+    }).length;
+
+    // Day 7 retention: users who returned within 7 days of signup
+    const day7Retained = cohortUsers.filter(user => {
+      if (!user.lastLoginAt) return false;
+      const daysDiff = Math.floor((user.lastLoginAt.getTime() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24));
+      return daysDiff <= 7;
+    }).length;
+
+    // Day 30 retention: users who returned within 30 days of signup
+    const day30Retained = cohortUsers.filter(user => {
+      if (!user.lastLoginAt) return false;
+      const daysDiff = Math.floor((user.lastLoginAt.getTime() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24));
+      return daysDiff <= 30;
+    }).length;
+
+    retentionData.day1 = totalCohortUsers > 0 ? (day1Retained / totalCohortUsers) * 100 : 0;
+    retentionData.day7 = totalCohortUsers > 0 ? (day7Retained / totalCohortUsers) * 100 : 0;
+    retentionData.day30 = totalCohortUsers > 0 ? (day30Retained / totalCohortUsers) * 100 : 0;
+
+    return retentionData;
+  } catch (error) {
+    console.error('Error calculating user retention:', error);
+    return { day1: 0, day7: 0, day30: 0 };
+  }
+};
 
 interface UserEngagementData {
   totalUsers: number;
@@ -167,6 +224,9 @@ const UserEngagementMetrics: React.FC = () => {
           });
         }
 
+        // Calculate user retention rates
+        const retentionRates = await calculateUserRetention(db, startDate, now);
+
         setEngagementData({
           totalUsers,
           activeUsers,
@@ -176,7 +236,7 @@ const UserEngagementMetrics: React.FC = () => {
           sessionsPerUser: Math.round(sessionsPerUser * 10) / 10,
           bounceRate: Math.round(bounceRate * 10) / 10,
           topUserActions,
-          userRetention: { day1: 0, day7: 0, day30: 0 }, // TODO: Calculate real retention rates
+          userRetention: retentionRates,
           engagementTrends
         });
 

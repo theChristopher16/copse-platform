@@ -42,6 +42,7 @@ const FeedbackPage: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [userSubmissions, setUserSubmissions] = useState<FeedbackSubmission[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -115,6 +116,7 @@ const FeedbackPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmissionError(null); // Clear any previous errors
     
     try {
       // Import Firebase functions
@@ -170,7 +172,11 @@ const FeedbackPage: React.FC = () => {
       
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      // TODO: Show error message to user
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit feedback. Please try again.';
+      setSubmissionError(errorMessage);
+      
+      // Hide error message after 10 seconds
+      setTimeout(() => setSubmissionError(null), 10000);
     } finally {
       setIsSubmitting(false);
     }
@@ -265,6 +271,18 @@ const FeedbackPage: React.FC = () => {
               <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
               <span className="text-green-800 font-medium">
                 Thank you! Your feedback has been submitted successfully.
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {submissionError && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+            <div className="flex items-center">
+              <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
+              <span className="text-red-800 font-medium">
+                {submissionError}
               </span>
             </div>
           </div>

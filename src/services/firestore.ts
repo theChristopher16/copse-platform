@@ -391,6 +391,160 @@ export const firestoreService = {
         });
       }
     });
+  },
+
+  // Financial operations
+  async getFinancialTransactions(): Promise<any[]> {
+    return safeFirestoreCall(async () => {
+      const transactionsRef = collection(db, 'financial-transactions');
+      const q = query(transactionsRef, orderBy('date', 'desc'));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
+  },
+
+  async getBudgetCategories(): Promise<any[]> {
+    return safeFirestoreCall(async () => {
+      const budgetsRef = collection(db, 'budget-categories');
+      const q = query(budgetsRef, orderBy('name'));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
+  },
+
+  async createFinancialTransaction(transactionData: any): Promise<string> {
+    return safeFirestoreCall(async () => {
+      const transactionsRef = collection(db, 'financial-transactions');
+      const docRef = await addDoc(transactionsRef, {
+        ...transactionData,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      });
+      return docRef.id;
+    });
+  },
+
+  async updateFinancialTransaction(transactionId: string, updates: any): Promise<void> {
+    return safeFirestoreCall(async () => {
+      const transactionRef = doc(db, 'financial-transactions', transactionId);
+      await updateDoc(transactionRef, {
+        ...updates,
+        updatedAt: Timestamp.now()
+      });
+    });
+  },
+
+  async deleteFinancialTransaction(transactionId: string): Promise<void> {
+    return safeFirestoreCall(async () => {
+      const transactionRef = doc(db, 'financial-transactions', transactionId);
+      await deleteDoc(transactionRef);
+    });
+  },
+
+  async createBudgetCategory(categoryData: any): Promise<string> {
+    return safeFirestoreCall(async () => {
+      const budgetsRef = collection(db, 'budget-categories');
+      const docRef = await addDoc(budgetsRef, {
+        ...categoryData,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      });
+      return docRef.id;
+    });
+  },
+
+  async updateBudgetCategory(categoryId: string, updates: any): Promise<void> {
+    return safeFirestoreCall(async () => {
+      const categoryRef = doc(db, 'budget-categories', categoryId);
+      await updateDoc(categoryRef, {
+        ...updates,
+        updatedAt: Timestamp.now()
+      });
+    });
+  },
+
+  async deleteBudgetCategory(categoryId: string): Promise<void> {
+    return safeFirestoreCall(async () => {
+      const categoryRef = doc(db, 'budget-categories', categoryId);
+      await deleteDoc(categoryRef);
+    });
+  },
+
+  // Fundraising operations
+  async getFundraisingCampaigns(): Promise<any[]> {
+    return safeFirestoreCall(async () => {
+      const campaignsRef = collection(db, 'fundraising-campaigns');
+      const q = query(campaignsRef, orderBy('createdAt', 'desc'));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
+  },
+
+  async getFundraisingDonations(): Promise<any[]> {
+    return safeFirestoreCall(async () => {
+      const donationsRef = collection(db, 'fundraising-donations');
+      const q = query(donationsRef, orderBy('date', 'desc'));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
+  },
+
+  async createFundraisingCampaign(campaignData: any): Promise<string> {
+    return safeFirestoreCall(async () => {
+      const campaignsRef = collection(db, 'fundraising-campaigns');
+      const docRef = await addDoc(campaignsRef, {
+        ...campaignData,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      });
+      return docRef.id;
+    });
+  },
+
+  async updateFundraisingCampaign(campaignId: string, updates: any): Promise<void> {
+    return safeFirestoreCall(async () => {
+      const campaignRef = doc(db, 'fundraising-campaigns', campaignId);
+      await updateDoc(campaignRef, {
+        ...updates,
+        updatedAt: Timestamp.now()
+      });
+    });
+  },
+
+  async deleteFundraisingCampaign(campaignId: string): Promise<void> {
+    return safeFirestoreCall(async () => {
+      const campaignRef = doc(db, 'fundraising-campaigns', campaignId);
+      await deleteDoc(campaignRef);
+    });
+  },
+
+  async createFundraisingDonation(donationData: any): Promise<string> {
+    return safeFirestoreCall(async () => {
+      const donationsRef = collection(db, 'fundraising-donations');
+      const docRef = await addDoc(donationsRef, {
+        ...donationData,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      });
+      return docRef.id;
+    });
+  },
+
+  async updateFundraisingDonation(donationId: string, updates: any): Promise<void> {
+    return safeFirestoreCall(async () => {
+      const donationRef = doc(db, 'fundraising-donations', donationId);
+      await updateDoc(donationRef, {
+        ...updates,
+        updatedAt: Timestamp.now()
+      });
+    });
+  },
+
+  async deleteFundraisingDonation(donationId: string): Promise<void> {
+    return safeFirestoreCall(async () => {
+      const donationRef = doc(db, 'fundraising-donations', donationId);
+      await deleteDoc(donationRef);
+    });
   }
 };
 

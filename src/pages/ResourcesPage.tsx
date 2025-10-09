@@ -98,12 +98,66 @@ const ResourcesPage: React.FC = () => {
     );
   };
 
-  const handleDownload = (resource: Resource) => {
-    if (resource.url) {
-      // TODO: Implement actual file download
+  const handleDownload = async (resource: Resource) => {
+    if (!resource.url) {
+      console.warn('No URL available for resource:', resource.title);
+      return;
+    }
+
+    try {
       console.log(`Downloading: ${resource.title}`);
-      // For now, just open in new tab
+      
+      // Create a temporary anchor element to trigger download
+      const link = document.createElement('a');
+      link.href = resource.url;
+      
+      // Set the download attribute with a meaningful filename
+      const fileExtension = resource.fileType || getFileExtensionFromUrl(resource.url);
+      const filename = `${resource.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.${fileExtension}`;
+      link.download = filename;
+      
+      // Set target to _blank for external URLs
+      if (isExternalUrl(resource.url)) {
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+      }
+      
+      // Append to body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Track download analytics if available
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'download', {
+          event_category: 'resource',
+          event_label: resource.title,
+          value: 1
+        });
+      }
+      
+    } catch (error) {
+      console.error('Error downloading resource:', error);
+      
+      // Fallback to opening in new tab if download fails
       window.open(resource.url, '_blank');
+    }
+  };
+
+  // Helper function to get file extension from URL
+  const getFileExtensionFromUrl = (url: string): string => {
+    const pathname = new URL(url).pathname;
+    const extension = pathname.split('.').pop()?.toLowerCase();
+    return extension || 'pdf'; // Default to PDF if no extension found
+  };
+
+  // Helper function to check if URL is external
+  const isExternalUrl = (url: string): boolean => {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.hostname !== window.location.hostname;
+    } catch {
+      return false;
     }
   };
 

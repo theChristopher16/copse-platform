@@ -270,9 +270,55 @@ class SystemMonitorService {
   }
 
   private async getStorageUsage(storage: any): Promise<{ bytesUsed: number }> {
-    // Temporarily disable storage access to prevent CORS errors
-    // TODO: Re-enable when Firebase Storage is properly configured
-    return { bytesUsed: 50 * 1024 * 1024 }; // Default 50MB estimate
+    try {
+      if (!storage) {
+        // If no storage instance provided, return default estimate
+        return { bytesUsed: 50 * 1024 * 1024 }; // Default 50MB estimate
+      }
+
+      // Get storage usage by listing all files and calculating total size
+      const { listAll, ref } = await import('firebase/storage');
+      
+      // List all files in the root storage bucket
+      const storageRef = ref(storage);
+      const result = await listAll(storageRef);
+      
+      let totalBytes = 0;
+      
+      // Calculate size for all files
+      for (const itemRef of result.items) {
+        try {
+          const metadata = await itemRef.getMetadata();
+          totalBytes += metadata.size || 0;
+        } catch (error) {
+          console.warn('Could not get metadata for file:', itemRef.fullPath, error);
+        }
+      }
+      
+      // Also check subdirectories recursively
+      for (const folderRef of result.prefixes) {
+        try {
+          const folderResult = await listAll(folderRef);
+          
+          for (const itemRef of folderResult.items) {
+            try {
+              const metadata = await itemRef.getMetadata();
+              totalBytes += metadata.size || 0;
+            } catch (error) {
+              console.warn('Could not get metadata for file:', itemRef.fullPath, error);
+            }
+          }
+        } catch (error) {
+          console.warn('Could not list folder:', folderRef.fullPath, error);
+        }
+      }
+      
+      return { bytesUsed: totalBytes };
+    } catch (error) {
+      console.error('Error getting storage usage:', error);
+      // Return default estimate if there's an error
+      return { bytesUsed: 50 * 1024 * 1024 }; // Default 50MB estimate
+    }
   }
 
   private async estimateCosts(db: any, storage: any): Promise<CostEstimate> {

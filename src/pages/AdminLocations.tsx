@@ -69,10 +69,18 @@ const AdminLocations: React.FC = () => {
   const handleDeleteLocation = async (locationId: string) => {
     if (window.confirm('Are you sure you want to delete this location?')) {
       try {
-        // TODO: Implement Firebase delete
-        setLocations(prev => prev.filter(loc => loc.id !== locationId));
-        addNotification('success', 'Location Deleted', 'Location has been successfully deleted.');
+        // Delete location from Firebase
+        const result = await adminService.deleteLocation(locationId, 'Admin deleted location');
+        
+        if (result.success) {
+          // Remove from local state
+          setLocations(prev => prev.filter(loc => loc.id !== locationId));
+          addNotification('success', 'Location Deleted', 'Location has been successfully deleted.');
+        } else {
+          addNotification('error', 'Delete Failed', result.error || 'Failed to delete location. Please try again.');
+        }
       } catch (error) {
+        console.error('Error deleting location:', error);
         addNotification('error', 'Delete Failed', 'Failed to delete location. Please try again.');
       }
     }

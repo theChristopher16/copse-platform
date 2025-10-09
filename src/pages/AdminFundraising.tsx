@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAdmin } from '../contexts/AdminContext';
+import { firestoreService } from '../services/firestore';
 import { 
   DollarSign, 
   Plus, 
@@ -68,13 +69,13 @@ const AdminFundraising: React.FC = () => {
     const fetchFundraisingData = async () => {
       try {
         setLoading(true);
-        // TODO: Add fundraising service methods to firestoreService
-        // const campaignsData = await firestoreService.getFundraisingCampaigns();
-        // const donationsData = await firestoreService.getFundraisingDonations();
+        const [campaignsData, donationsData] = await Promise.all([
+          firestoreService.getFundraisingCampaigns(),
+          firestoreService.getFundraisingDonations()
+        ]);
         
-        // For now, set empty arrays until service methods are implemented
-        setCampaigns([]);
-        setDonations([]);
+        setCampaigns(campaignsData);
+        setDonations(donationsData);
       } catch (error) {
         console.error('Error fetching fundraising data:', error);
         setCampaigns([]);
@@ -83,7 +84,7 @@ const AdminFundraising: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     fetchFundraisingData();
   }, []);
 

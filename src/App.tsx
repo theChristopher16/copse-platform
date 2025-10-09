@@ -4,7 +4,6 @@ import { CopseProvider } from './contexts/CopseContext';
 import { AdminProvider } from './contexts/AdminContext';
 import { MultiTenantProvider } from './contexts/MultiTenantContext';
 import { ToastProvider } from './contexts/ToastContext';
-import { AuthProvider } from './contexts/AuthContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import ScrollToTop from './components/ScrollToTop';
 
@@ -71,11 +70,10 @@ function App() {
   return (
     <ErrorBoundary>
       <ToastProvider>
-        <AuthProvider>
-          <AdminProvider>
-            <MultiTenantProvider>
-              <CopseProvider>
-                <AuthGuard>
+        <AdminProvider>
+          <MultiTenantProvider>
+            <CopseProvider>
+              <AuthGuard>
                 <Router>
                   <ScrollToTop />
                   <Routes>
@@ -135,11 +133,10 @@ function App() {
                     <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
                   </Routes>
                 </Router>
-                </AuthGuard>
-              </CopseProvider>
-            </MultiTenantProvider>
-          </AdminProvider>
-        </AuthProvider>
+              </AuthGuard>
+            </CopseProvider>
+          </MultiTenantProvider>
+        </AdminProvider>
       </ToastProvider>
     </ErrorBoundary>
   );

@@ -425,16 +425,48 @@ class MultiTenantService {
     collaborationCount: number;
   }> {
     try {
-      // This would aggregate data from various collections
-      // For now, return basic stats
+      // Get organization data
       const org = await this.getOrganization(organizationId);
+      
+      // Query various collections for counts
+      const [
+        eventsSnapshot,
+        announcementsSnapshot,
+        resourcesSnapshot,
+        collaborationsSnapshot
+      ] = await Promise.all([
+        // Events count
+        getDocs(query(
+          collection(db, 'events'),
+          where('organizationId', '==', organizationId),
+          where('isActive', '==', true)
+        )),
+        // Announcements count
+        getDocs(query(
+          collection(db, 'announcements'),
+          where('organizationId', '==', organizationId),
+          where('isActive', '==', true)
+        )),
+        // Resources count
+        getDocs(query(
+          collection(db, 'resources'),
+          where('organizationId', '==', organizationId),
+          where('isActive', '==', true)
+        )),
+        // Collaborations count (assuming this is a collection for collaborative activities)
+        getDocs(query(
+          collection(db, 'collaborations'),
+          where('organizationId', '==', organizationId),
+          where('isActive', '==', true)
+        ))
+      ]);
       
       return {
         memberCount: org?.memberCount || 0,
-        eventCount: 0, // TODO: Implement
-        announcementCount: 0, // TODO: Implement
-        resourceCount: 0, // TODO: Implement
-        collaborationCount: 0 // TODO: Implement
+        eventCount: eventsSnapshot.size,
+        announcementCount: announcementsSnapshot.size,
+        resourceCount: resourcesSnapshot.size,
+        collaborationCount: collaborationsSnapshot.size
       };
     } catch (error: any) {
       console.error('Error fetching organization stats:', error);

@@ -52,17 +52,17 @@ const ChatChannelManagement: React.FC<ChatChannelManagementProps> = ({ className
   const loadChannels = async () => {
     try {
       setIsLoading(true);
-      // TODO: Implement getChannels method
-      // const channelsData = await chatService.getChannels();
-      // setChannels(channelsData);
+      const channelsData = await chatService.getChannels();
+      setChannels(channelsData);
       
-      // Mock data for now
-      setChannels([
-        {
-          id: '1',
-          name: 'general',
-          description: 'General den discussion',
-          type: 'public',
+      // Fallback to mock data if no channels returned
+      if (channelsData.length === 0) {
+        setChannels([
+          {
+            id: '1',
+            name: 'general',
+            description: 'General den discussion',
+            type: 'public',
           denId: 'den-1',
           createdBy: currentUser?.uid || '',
           createdAt: new Date(),
@@ -95,34 +95,79 @@ const ChatChannelManagement: React.FC<ChatChannelManagementProps> = ({ className
     }
 
     try {
-      // TODO: Implement createChannel method
-      // await chatService.createChannel({
-      //   name: formData.name,
-      //   description: formData.description,
-      //   type: formData.type,
-      //   denId: currentUser?.profile?.den || 'general'
-      // });
+      const channelId = await chatService.createChannel(
+        formData.name,
+        formData.description,
+        currentUser?.profile?.den || 'general'
+      );
 
-      // Mock creation
-      const newChannel: ChatChannel = {
-        id: Date.now().toString(),
-        name: formData.name,
-        description: formData.description,
-        type: formData.type,
-        denId: currentUser?.profile?.den || 'general',
-        createdBy: currentUser?.uid || '',
-        createdAt: new Date(),
-        memberCount: 0,
-        isActive: true
-      };
-
-      setChannels([...channels, newChannel]);
-      setShowCreateModal(false);
+      // Refresh channels list
+      await loadChannels();
+      
+      // Reset form and close modal
       setFormData({ name: '', description: '', type: 'public' });
+      setIsModalOpen(false);
+      setError('');
     } catch (error: any) {
       setError(error.message);
     }
   };
+
+  const handleDeleteChannel = async (channelId: string) => {
+    if (!window.confirm('Are you sure you want to delete this channel? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await chatService.deleteChannel(channelId);
+      
+      // Refresh channels list
+      await loadChannels();
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const handleEditChannel = async () => {
+    if (!editingChannel || !formData.name.trim()) {
+      setError('Channel name is required');
+      return;
+    }
+
+    try {
+      await chatService.updateChannel(editingChannel.id, {
+        name: formData.name,
+        description: formData.description,
+        type: formData.type
+      });
+
+      // Refresh channels list
+      await loadChannels();
+      
+      // Reset form and close modal
+      setFormData({ name: '', description: '', type: 'public' });
+      setEditingChannel(null);
+      setIsModalOpen(false);
+      setError('');
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  // Mock data for fallback (keeping for reference)
+  const getMockChannels = (): ChatChannel[] => [
+    {
+      id: '1',
+      name: 'general',
+      description: 'General den discussion',
+      type: 'public',
+      denId: 'den-1',
+      createdBy: currentUser?.uid || '',
+      createdAt: new Date(),
+      memberCount: 15,
+      isActive: true
+    }
+  ];
 
   const handleDeleteChannel = async (channelId: string) => {
     if (!window.confirm('Are you sure you want to delete this channel? This action cannot be undone.')) {

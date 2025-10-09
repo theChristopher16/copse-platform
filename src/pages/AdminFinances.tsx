@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAdmin } from '../contexts/AdminContext';
+import { firestoreService } from '../services/firestore';
 import { 
   DollarSign, 
   Plus, 
@@ -72,13 +73,13 @@ const AdminFinances: React.FC = () => {
     const fetchFinancialData = async () => {
       try {
         setLoading(true);
-        // TODO: Add financial service methods to firestoreService
-        // const transactionsData = await firestoreService.getFinancialTransactions();
-        // const budgetsData = await firestoreService.getBudgetCategories();
+        const [transactionsData, budgetsData] = await Promise.all([
+          firestoreService.getFinancialTransactions(),
+          firestoreService.getBudgetCategories()
+        ]);
         
-        // For now, set empty arrays until service methods are implemented
-        setTransactions([]);
-        setBudgets([]);
+        setTransactions(transactionsData);
+        setBudgets(budgetsData);
       } catch (error) {
         console.error('Error fetching financial data:', error);
         setTransactions([]);
@@ -87,7 +88,7 @@ const AdminFinances: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     fetchFinancialData();
   }, []);
 
