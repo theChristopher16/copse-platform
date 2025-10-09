@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import { authService, AppUser, UserRole, Permission, SocialProvider, SELECTABLE_ROLES, ScoutInfo } from '../../services/authService';
 import chatService from '../../services/chatService';
-// import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface UserProfileManagerProps {
   user?: AppUser;
@@ -51,8 +51,7 @@ const UserProfileManager: React.FC<UserProfileManagerProps> = ({
   canEditRole = false,
   canEditPermissions = false
 }) => {
-  // const { user: currentUser } = useAuth();
-  const currentUser = null; // TODO: Implement AuthContext
+  const { user: currentUser } = useAuth();
   const [user, setUser] = useState<AppUser | null>(propUser || currentUser);
   const [isEditMode, setIsEditMode] = useState(isEditing);
   const [isLoading, setIsLoading] = useState(false);

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Camera, Upload, X, User } from 'lucide-react';
 import ProfilePicture from './ProfilePicture';
+import { storageService } from '../../services/storageService';
 
 interface ProfilePictureUploadProps {
   currentPhotoURL?: string;
@@ -8,6 +9,7 @@ interface ProfilePictureUploadProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   disabled?: boolean;
+  userId?: string; // Required for Firebase Storage upload
 }
 
 const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
@@ -15,7 +17,8 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
   onPhotoChange,
   size = 'lg',
   className = '',
-  disabled = false
+  disabled = false,
+  userId
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [previewURL, setPreviewURL] = useState<string | null>(null);
@@ -37,26 +40,40 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({
       return;
     }
 
+    // Check if userId is provided for Firebase Storage
+    if (!userId) {
+      alert('User ID is required for profile picture upload');
+      return;
+    }
+
     setIsUploading(true);
 
     try {
-      // Create preview URL
+      // Create preview URL for immediate display
       const preview = URL.createObjectURL(file);
       setPreviewURL(preview);
 
-      // In a real implementation, you would upload to Firebase Storage here
-      // For now, we'll use the preview URL as a placeholder
-      // TODO: Implement actual file upload to Firebase Storage
+      // Upload to Firebase Storage
+      const uploadResult = await storageService.uploadProfilePicture(file, userId, {
+        onProgress: (progress) => {
+          // You could add a progress bar here if needed
+          console.log(`Upload progress: ${progress}%`);
+        }
+      });
+
+      // Clean up old profile pictures (keep only latest 3)
+      await storageService.cleanupOldProfilePictures(userId);
+
+      // Use the Firebase Storage URL
+      onPhotoChange(uploadResult.url);
       
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For now, use the preview URL (in production, this would be the Firebase Storage URL)
-      onPhotoChange(preview);
+      // Clean up preview URL since we now have the real URL
+      URL.revokeObjectURL(preview);
+      setPreviewURL(null);
       
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('Failed to upload image. Please try again.');
+      alert(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setPreviewURL(null);
     } finally {
       setIsUploading(false);
